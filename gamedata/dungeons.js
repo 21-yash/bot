@@ -39,7 +39,7 @@ module.exports = {
         boss: 'grave_golem',
         pic: 'https://cdn.discordapp.com/attachments/920231858204200961/1413124558340231308/image-removebg-preview_34.png?ex=68baca4d&is=68b978cd&hm=179a19d4917216c7f01ed57ef0a5f64eb149af89053d4593331f39a0b598a699&',
         baseRewards: {
-            gold: [100, 250],
+            gold: [80, 150],
             xp: [50, 100],
             lootTable: [
                 { itemId: 'crystal_shard', baseChance: 0.7, quantityRange: [2, 5] },
@@ -70,7 +70,7 @@ module.exports = {
         boss: 'molten_titan',
         pic: 'https://cdn.discordapp.com/attachments/920231858204200961/1413124558847868928/image-removebg-preview_35.png?ex=68baca4d&is=68b978cd&hm=3a6e916f62bfd2d9380c810961e512ba1130127962dfffb799c0532c9ac4ad93&',
         baseRewards: {
-            gold: [200, 400],
+            gold: [120, 200],
             xp: [100, 200],
             lootTable: [
                 { itemId: 'fire_essence', baseChance: 0.6, quantityRange: [1, 2] },
@@ -93,7 +93,7 @@ module.exports = {
     'cavern_of_echoes': {
         name: 'Cavern of Echoes',
         tier: 'III',
-        floors: 7,
+        floors: 22,
         durationMinutes: 45,
         staminaCost: 60,
         levelRequirement: 15,
@@ -101,7 +101,7 @@ module.exports = {
         boss: 'spirit_wraith',
         pic: 'https://cdn.discordapp.com/attachments/920231858204200961/1413124559661436978/image-removebg-preview_36.png?ex=68baca4d&is=68b978cd&hm=796aaad0d9a4184393a6a38765ce99262c633487c63589b2a9238154de2fa8c2&',
         baseRewards: {
-            gold: [200, 400],
+            gold: [150, 250],
             xp: [80, 160],
             lootTable: [
                 { itemId: 'echo_crystal', baseChance: 0.6, quantityRange: [1, 3] },
@@ -132,7 +132,7 @@ module.exports = {
         boss: 'frozen_wyvern',
         pic: 'https://cdn.discordapp.com/attachments/920231858204200961/1413124560580120636/image-removebg-preview_37.png?ex=68baca4d&is=68b978cd&hm=50c80360fc5ac9c05e8efb736756c77268fd293f54e37f83296bd5e08f5f4b91&',
         baseRewards: {
-            gold: [250, 500],
+            gold: [180, 280],
             xp: [120, 250],
             lootTable: [
                 { itemId: 'ice_crystal', baseChance: 0.65, quantityRange: [1, 2] },
@@ -154,7 +154,7 @@ module.exports = {
     'stormy_cliffs': {
         name: 'Stormy Cliffs',
         tier: 'IV',
-        floors: 20,
+        floors: 32,
         durationMinutes: 40,
         staminaCost: 60,
         levelRequirement: 20,
@@ -162,7 +162,7 @@ module.exports = {
         boss: 'tempest_dragon',
         pic: 'https://cdn.discordapp.com/attachments/920231858204200961/1413124561536417813/image-removebg-preview_38.png?ex=68baca4e&is=68b978ce&hm=f4ce53c83ee540bcc6c44fbf1919b73da93e74b699a020d585da773f290f41b4&',
         baseRewards: {
-            gold: [300, 600],
+            gold: [200, 300],
             xp: [150, 300],
             lootTable: [
                 { itemId: 'storm_fragment', baseChance: 0.6, quantityRange: [1, 2] },
@@ -173,7 +173,7 @@ module.exports = {
                 { itemId: 'rare_mechanical_egg', chance: 0.08 },
                 { itemId: 'epic_elemental_egg', chance: 0.06 },
                 { itemId: 'rare_mystic_egg', chance: 0.05 },
-                { itemId: 'legendary_mechanical_egg', chance: 0.02 }
+                { itemId: 'legendary_mechanical_egg', chance: 0.004 }
             ]
         },
         scaleFactors: { gold: 1.08, xp: 1.07, lootChance: 1.04 },
@@ -183,7 +183,7 @@ module.exports = {
     'volcanic_abyss': {
         name: 'Volcanic Abyss',
         tier: 'IV',
-        floors: 10,
+        floors: 35,
         durationMinutes: 60,
         staminaCost: 80,
         levelRequirement: 25,
@@ -191,7 +191,7 @@ module.exports = {
         boss: 'volcano_lord',
         pic: 'https://cdn.discordapp.com/attachments/920231858204200961/1413124562736119839/image-removebg-preview_39.png?ex=68baca4e&is=68b978ce&hm=9c99589cad9c32fb8b24b7e1f25ac73429a86b9556adc3bce0e4caf7b6b7e74e&',
         baseRewards: {
-            gold: [400, 800],
+            gold: [220, 320],
             xp: [150, 300],
             lootTable: [
                 { itemId: 'molten_core', baseChance: 0.5, quantityRange: [1, 2] },
@@ -203,8 +203,8 @@ module.exports = {
                 { itemId: 'rare_beast_egg', chance: 0.12 },
                 { itemId: 'epic_elemental_egg', chance: 0.10 },
                 { itemId: 'epic_undead_egg', chance: 0.06 },
-                { itemId: 'legendary_mystic_egg', chance: 0.04 },
-                { itemId: 'legendary_undead_egg', chance: 0.02 },
+                { itemId: 'legendary_mystic_egg', chance: 0.004 },
+                { itemId: 'legendary_undead_egg', chance: 0.004 },
             ]
         },
         scaleFactors: { gold: 1.08, xp: 1.07, lootChance: 1.04 },
