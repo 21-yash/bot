@@ -1,5 +1,5 @@
 module.exports = {
-
+    // --- HATCHER (Crafting) ---
     'alchemical_incubator': {
         name: 'Alchemical Incubator',
         type: 'hatcher',
@@ -141,6 +141,20 @@ module.exports = {
         description: 'A sphere of crystallized terror, dangerous to even look upon.',
         source: 'foraging'
     },
+    'fire_bloom': {
+        name: 'Fire Bloom',
+        type: 'ingredient',
+        rarity: 'Legendary',
+        description: 'A flower that thrives in extreme heat, its petals are made of cool flame.',
+        source: 'dungeon'
+    },
+    'spirit_dust': {
+        name: 'Spirit Dust',
+        type: 'ingredient',
+        rarity: 'Epic',
+        description: 'The shimmering remains of a benevolent spirit, perfect for enchanting.',
+        source: 'dungeon'
+    },
     // --- POTIONS (Brewing) ---
     'minor_healing_potion': {
         name: 'Minor Healing Potion',
@@ -148,7 +162,8 @@ module.exports = {
         rarity: 'Common',
         description: 'A simple brew that restores 50 HP to a familiar.',
         source: 'brewing',
-        effect: { type: 'heal', value: 50 }
+        effect: { type: 'heal', value: 50 },
+        usable: true
     },
     'greater_healing_potion': {
         name: 'Greater Healing Potion',
@@ -156,7 +171,8 @@ module.exports = {
         rarity: 'Rare',
         description: 'A powerful potion that restores 200 HP.',
         source: 'brewing',
-        effect: { type: 'heal', value: 200 }
+        effect: { type: 'heal', value: 200 },
+        usable: true
     },
     'elixir_of_strength': {
         name: 'Elixir of Strength',
@@ -164,7 +180,8 @@ module.exports = {
         rarity: 'Uncommon',
         description: 'Temporarily boosts a familiar\'s ATK by 10 for one dungeon.',
         source: 'brewing',
-        effect: { type: 'stat_boost', stat: 'atk', value: 10, duration: '1_dungeon' }
+        effect: { type: 'stat_boost', stat: 'atk', value: 10, duration: '1_dungeon' },
+        usable: false
     },
     'mana_draught': {
         name: 'Mana Draught',
@@ -172,7 +189,8 @@ module.exports = {
         rarity: 'Uncommon',
         description: 'A concentrated tonic that sharpens reactions for a short time.',
         source: 'brewing',
-        effect: { type: 'stat_boost', stat: 'spd', value: 5, duration: '1_battle' }
+        effect: { type: 'stat_boost', stat: 'spd', value: 5, duration: '1_battle' },
+        usable: false
     },
 
     'elixir_of_focus': {
@@ -181,7 +199,8 @@ module.exports = {
         rarity: 'Uncommon',
         description: 'Sharpens a familiar\'s senses, boosting accuracy and crit chance.',
         source: 'brewing',
-        effect: { type: 'stat_boost', stat: 'crit' , value: 15, duration: '1_dungeon' }
+        effect: { type: 'stat_boost', stat: 'crit' , value: 15, duration: '1_dungeon' },
+        usable: false
     },
     'shadow_draught': {
         name: 'Shadow Draught',
@@ -189,7 +208,8 @@ module.exports = {
         rarity: 'Epic',
         description: 'A forbidden potion that lets your familiar strike from the shadows.',
         source: 'brewing',
-        effect: { type: 'special', ability: 'shadow_strike', duration: '1_dungeon' }
+        effect: { type: 'special', ability: 'shadow_strike', duration: '1_dungeon' },
+        usable: false
     },
     'storm_elixir': {
         name: 'Storm Elixir',
@@ -197,7 +217,8 @@ module.exports = {
         rarity: 'Rare',
         description: 'Channels the power of thunder, dramatically boosting speed and critical chance.',
         source: 'brewing',
-        effect: { type: 'multi_boost', stats: { spd: 15, crit: 20 }, duration: '1_dungeon' }
+        effect: { type: 'multi_boost', stats: { spd: 15, crit: 20 }, duration: '1_dungeon' },
+        usable: false
     },
     'void_tonic': {
         name: 'Void Tonic',
@@ -205,7 +226,8 @@ module.exports = {
         rarity: 'Epic',
         description: 'A dangerous brew that grants the ability to phase through attacks.',
         source: 'brewing',
-        effect: { type: 'special', ability: 'phase_dodge', chance: 0.25, duration: '1_dungeon' }
+        effect: { type: 'special', ability: 'phase_dodge', chance: 0.25, duration: '1_dungeon' },
+        usable: false
     },
     'celestial_elixir': {
         name: 'Celestial Elixir',
@@ -213,7 +235,89 @@ module.exports = {
         rarity: 'Legendary',
         description: 'A divine potion that temporarily grants heavenly protection and power.',
         source: 'brewing',
-        effect: { type: 'multi_boost', stats: { hp: 100, atk: 25, def: 25, luck: 15 }, duration: '1_dungeon' }
+        effect: { type: 'multi_boost', stats: { hp: 100, atk: 25, def: 25, luck: 15 }, duration: '1_dungeon' },
+        usable: false
+    },
+    'level_potion': {
+        name: 'Level Potion',
+        type: 'potion',
+        rarity: 'common',
+        description: 'Mysterious drink which grants sudden level increase by 1',
+        source: 'brewing',
+        effect: { type: 'level_up', value: 1 },
+        usable: true
+    },
+    'ice_resistance_potion': {
+        name: 'Ice Resistance Potion',
+        type: 'potion',
+        rarity: 'Uncommon',
+        description: 'A chilling brew that protects against frost and ice attacks.',
+        source: 'brewing',
+        effect: { type: 'resistance', element: 'ice', value: 50, duration: '1_dungeon' },
+        usable: false
+    },
+    'fire_resistance_draught': {
+        name: 'Fire Resistance Draught',
+        type: 'potion',
+        rarity: 'Uncommon',
+        description: 'A cooling potion that shields the drinker from fire and heat.',
+        source: 'brewing',
+        effect: { type: 'resistance', element: 'fire', value: 50, duration: '1_dungeon' },
+        usable: false
+    },
+    'berserker_elixir': {
+        name: 'Berserker Elixir',
+        type: 'potion',
+        rarity: 'Rare',
+        description: 'A dangerous potion that trades defense for overwhelming attack power.',
+        source: 'brewing',
+        effect: { type: 'trade_boost', gain: { atk: 30 }, lose: { def: 15 }, duration: '1_dungeon' },
+        usable: false
+    },
+    'spirit_communion_brew': {
+        name: 'Spirit Communion Brew',
+        type: 'potion',
+        rarity: 'Epic',
+        description: 'Allows the drinker to commune with spirits, gaining supernatural insight.',
+        source: 'brewing',
+        effect: { type: 'special', ability: 'see_hidden', bonus_luck: 25, duration: '1_dungeon' },
+        usable: false
+    },
+    'mechanical_oil': {
+        name: 'Mechanical Oil',
+        type: 'potion',
+        rarity: 'Uncommon',
+        description: 'A specialized lubricant that enhances the performance of mechanical familiars.',
+        source: 'brewing',
+        effect: { type: 'familiar_type_boost', target: 'mechanical', stats: { spd: 15, accuracy: 10 }, duration: '1_dungeon' },
+        usable: false
+    },
+    'nightmare_draught': {
+        name: 'Nightmare Draught',
+        type: 'potion',
+        rarity: 'Legendary',
+        description: 'A terrifying concoction that grants the ability to inflict fear upon enemies.',
+        source: 'brewing',
+        effect: { type: 'special', ability: 'fear_strike', chance: 0.30, duration: '1_dungeon' },
+        usable: false
+    },
+    'essence_fusion_elixir': {
+        name: 'Essence Fusion Elixir',
+        type: 'potion',
+        rarity: 'Epic',
+        description: 'A complex brew that temporarily combines multiple elemental powers.',
+        source: 'brewing',
+        effect: { type: 'multi_element', elements: ['fire', 'ice', 'storm'], damage_boost: 20, duration: '1_dungeon' },
+        usable: false
+    },
+    'crystal_clarity_potion': {
+        name: 'Crystal Clarity Potion',
+        type: 'potion',
+        rarity: 'Rare',
+        description: 'A clear potion that sharpens perception and reveals weaknesses.',
+        source: 'brewing',
+        effect: { type: 'special', ability: 'weakness_detection', crit_bonus: 25, duration: '1_battle' },
+        usable: false
     },
 
     // --- EQUIPMENT (Crafting/Drops) ---
@@ -226,7 +330,6 @@ module.exports = {
         source: 'crafting',
         stats: { atk: 5 }
     },
-
     'leather_helmet': {
         name: 'Leather Helmet',
         type: 'equipment',
@@ -236,7 +339,6 @@ module.exports = {
         source: 'crafting',
         stats: { def: 3 }
     },
-
     'iron_sword': {
         name: 'Iron Sword',
         type: 'equipment',
@@ -246,7 +348,6 @@ module.exports = {
         source: 'crafting',
         stats: { atk: 18 }
     },
-
     'bronze_sword': {
         name: 'Bronze Sword',
         type: 'equipment',
@@ -256,17 +357,15 @@ module.exports = {
         source: 'crafting',
         stats: { atk: 12 }
     },
-
     'enchanted_charm': {
         name: 'Enchanted Charm',
         type: 'equipment',
-        rarity: 'Epic',
+        rarity: 'uncommon',
         slot: 'accessory',
         description: 'A charm humming with stored energy from a mana draught.',
         source: 'crafting',
         stats: { luck: 10, spd: 2 }
     },
-
     'glowing_amulet': {
         name: 'Glowing Amulet',
         type: 'equipment',
@@ -275,6 +374,376 @@ module.exports = {
         description: 'A warm light radiates from within, emboldening its bearer.',
         source: 'crafting',
         stats: { hp: 50, atk: 5 }
+    },
+    'guardian_shield': {
+        name: 'Guardian Shield',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'offhand',
+        description: 'A polished shield that glows faintly when blocking attacks.',
+        source: 'dungeon_drop',
+        stats: { def: 20, hp: 50 }
+    },
+    'phoenix_crown': {
+        name: 'Phoenix Crown',
+        type: 'equipment',
+        rarity: 'Legendary',
+        slot: 'helmet',
+        description: 'A mythical crown said to revive its wearer once per dungeon.',
+        source: 'boss_drop',
+        stats: { hp: 100, atk: 20, special: 'revive_once' }
+    },
+    'stormcaller_staff': {
+        name: 'Stormcaller Staff',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'weapon',
+        description: 'A staff that crackles with lightning, calling storms to aid its wielder.',
+        source: 'crafting',
+        stats: { atk: 30, spd: 10, special: 'lightning_strike' }
+    },
+    'celestial_crown': {
+        name: 'Celestial Crown',
+        type: 'equipment',
+        rarity: 'Legendary',
+        slot: 'head',
+        description: 'A crown of pure starlight that blesses its wearer with divine favor.',
+        source: 'crafting',
+        stats: { hp: 75, atk: 15, def: 15, luck: 20 }
+    },
+    'void_cloak': {
+        name: 'Void Cloak',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'armor',
+        description: 'A cloak woven from shadow essence, allowing its wearer to blend with darkness.',
+        source: 'crafting',
+        stats: { def: 20, spd: 15, special: 'shadow_blend' }
+    },
+    'storm_boots': {
+        name: 'Storm Boots',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'boots',
+        description: 'Boots that allow the wearer to move with the speed of wind.',
+        source: 'crafting',
+        stats: { spd: 25, dodge: 5 }
+    },
+    'ember_blade': {
+        name: 'Ember Blade',
+        type: 'equipment',
+        rarity: 'Uncommon',
+        slot: 'weapon',
+        description: 'A sword infused with ember moss, its blade glows with warm orange light.',
+        source: 'crafting',
+        stats: { atk: 14, fire_damage: 5, special: 'burn_chance' }
+    },
+    'frost_spear': {
+        name: 'Frost Spear',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'weapon',
+        description: 'A crystalline spear that never loses its deadly chill.',
+        source: 'crafting',
+        stats: { atk: 16, ice_damage: 8, special: 'frost_pierce' }
+    },
+    'shadow_dagger': {
+        name: 'Shadow Dagger',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'weapon',
+        description: 'A blade forged from pure shadow essence, strikes from unexpected angles.',
+        source: 'crafting',
+        stats: { atk: 22, crit: 25, special: 'shadow_strike' }
+    },
+    'crystal_mace': {
+        name: 'Crystal Mace',
+        type: 'equipment',
+        rarity: 'Uncommon',
+        slot: 'weapon',
+        description: 'A heavy mace embedded with resonating crystal shards.',
+        source: 'crafting',
+        stats: { atk: 15, def: 5, special: 'crystal_shatter' }
+    },
+    'wind_bow': {
+        name: 'Wind Bow',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'weapon',
+        description: 'A bow crafted from wind crystals, arrows fly with supernatural speed.',
+        source: 'crafting',
+        stats: { atk: 18, spd: 8, accuracy: 15, special: 'wind_shot' }
+    },
+    'soul_scythe': {
+        name: 'Soul Scythe',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'weapon',
+        description: 'A terrifying weapon that can cut through both flesh and spirit.',
+        source: 'crafting',
+        stats: { atk: 26, crit: 15, special: 'soul_harvest' }
+    },
+    'mechanical_hammer': {
+        name: 'Mechanical Hammer',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'weapon',
+        description: 'A precision-engineered war hammer with hydraulic enhancement.',
+        source: 'crafting',
+        stats: { atk: 20, accuracy: 12, special: 'crushing_blow' }
+    },
+    'void_whip': {
+        name: 'Void Whip',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'weapon',
+        description: 'A weapon that seems to bend reality around its strikes.',
+        source: 'crafting',
+        stats: { atk: 19, spd: 12, special: 'void_lash' }
+    },
+    'ancient_war_axe': {
+        name: 'Ancient War Axe',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'weapon',
+        description: 'A massive axe from a bygone era, still sharp after centuries.',
+        source: 'crafting',
+        stats: { atk: 24, crit: 10, special: 'ancient_fury' }
+    },
+    'obsidian_katana': {
+        name: 'Obsidian Katana',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'weapon',
+        description: 'A masterwork blade of volcanic glass, perfectly balanced and deadly sharp.',
+        source: 'crafting',
+        stats: { atk: 28, crit: 20, accuracy: 10, special: 'volcanic_edge' }
+    },
+    'storm_trident': {
+        name: 'Storm Trident',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'weapon',
+        description: 'A three-pronged weapon that channels the power of thunder and lightning.',
+        source: 'crafting',
+        stats: { atk: 25, spd: 15, special: 'lightning_fork' }
+    },
+    'nightmare_cleaver': {
+        name: 'Nightmare Cleaver',
+        type: 'equipment',
+        rarity: 'Legendary',
+        slot: 'weapon',
+        description: 'A massive blade that radiates terror, forged from crystallized nightmares.',
+        source: 'crafting',
+        stats: { atk: 35, crit: 25, special: 'terror_strike' }
+    },
+    'celestial_lance': {
+        name: 'Celestial Lance',
+        type: 'equipment',
+        rarity: 'Legendary',
+        slot: 'weapon',
+        description: 'A divine spear that shines with starlight, blessed by celestial beings.',
+        source: 'crafting',
+        stats: { atk: 32, accuracy: 20, luck: 15, special: 'divine_thrust' }
+    },
+    'spirit_staff': {
+        name: 'Spirit Staff',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'weapon',
+        description: 'A staff that allows communion with spirits, enhancing magical abilities.',
+        source: 'crafting',
+        stats: { atk: 17, luck: 18, special: 'spirit_channel' }
+    },
+    'molten_flail': {
+        name: 'Molten Flail',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'weapon',
+        description: 'A chain weapon with a molten core head that burns everything it touches.',
+        source: 'crafting',
+        stats: { atk: 23, fire_damage: 12, special: 'molten_chain' }
+    },
+    'frost_circlet': {
+        name: 'Frost Circlet',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'head',
+        description: 'A delicate crown of crystallized ice that never melts, granting clarity of thought.',
+        source: 'crafting',
+        stats: { hp: 40, def: 12, spd: 8 }
+    },
+    'ember_helm': {
+        name: 'Ember Helm',
+        type: 'equipment',
+        rarity: 'Uncommon',
+        slot: 'head',
+        description: 'A helmet lined with warm ember moss, providing comfort in cold environments.',
+        source: 'crafting',
+        stats: { hp: 35, def: 15, fire_resist: 20 }
+    },
+    'echo_diadem': {
+        name: 'Echo Diadem',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'head',
+        description: 'A crown that amplifies the wearer\'s mental abilities through resonant crystals.',
+        source: 'crafting',
+        stats: { hp: 60, def: 10, luck: 15, special: 'echo_sight' }
+    },
+
+    // CHEST SLOT
+    'beast_hide_vest': {
+        name: 'Beast Hide Vest',
+        type: 'equipment',
+        rarity: 'Common',
+        slot: 'chest',
+        description: 'A sturdy vest crafted from tough beast hide, offering reliable protection.',
+        source: 'crafting',
+        stats: { hp: 45, def: 18 }
+    },
+    'mystic_robes': {
+        name: 'Mystic Robes',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'chest',
+        description: 'Flowing robes woven from mystic thread, shimmering with arcane power.',
+        source: 'crafting',
+        stats: { hp: 55, def: 12, atk: 10, special: 'mana_regeneration' }
+    },
+    'obsidian_plate': {
+        name: 'Obsidian Plate',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'chest',
+        description: 'Heavy armor forged from volcanic glass, nearly impenetrable yet surprisingly light.',
+        source: 'crafting',
+        stats: { hp: 80, def: 35, fire_resist: 30, spd: -5 }
+    },
+
+    // LEG SLOT
+    'wind_walker_pants': {
+        name: 'Wind Walker Pants',
+        type: 'equipment',
+        rarity: 'Uncommon',
+        slot: 'legs',
+        description: 'Light trousers enhanced with wind crystals for swift movement.',
+        source: 'crafting',
+        stats: { hp: 25, def: 8, spd: 15, dodge: 8 }
+    },
+    'frost_guard_leggings': {
+        name: 'Frost Guard Leggings',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'legs',
+        description: 'Protective leg armor that radiates cold, slowing nearby enemies.',
+        source: 'crafting',
+        stats: { hp: 40, def: 20, ice_resist: 25, special: 'frost_aura' }
+    },
+    'shadow_weave_pants': {
+        name: 'Shadow Weave Pants',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'legs',
+        description: 'Trousers woven from pure shadow essence, allowing silent movement.',
+        source: 'crafting',
+        stats: { hp: 35, def: 15, spd: 20, special: 'shadow_step' }
+    },
+
+    // BOOTS SLOT (Additional)
+    'crystal_treads': {
+        name: 'Crystal Treads',
+        type: 'equipment',
+        rarity: 'Common',
+        slot: 'boots',
+        description: 'Simple boots with crystal shard soles for better grip and stability.',
+        source: 'crafting',
+        stats: { spd: 8, def: 5, stability: 10 }
+    },
+    'molten_walkers': {
+        name: 'Molten Walkers',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'boots',
+        description: 'Boots forged from molten cores, leaving trails of harmless flame.',
+        source: 'crafting',
+        stats: { spd: 18, def: 12, fire_resist: 20, special: 'flame_trail' }
+    },
+
+    // OFFHAND SLOT
+    'spirit_orb': {
+        name: 'Spirit Orb',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'offhand',
+        description: 'A floating orb containing spirit dust, providing magical assistance in battle.',
+        source: 'crafting',
+        stats: { atk: 12, def: 8, luck: 12, special: 'spirit_guard' }
+    },
+    'mechanical_gauntlet': {
+        name: 'Mechanical Gauntlet',
+        type: 'equipment',
+        rarity: 'Uncommon',
+        slot: 'offhand',
+        description: 'A single precision-crafted gauntlet that enhances grip and dexterity.',
+        source: 'crafting',
+        stats: { atk: 8, accuracy: 15, crit: 5 }
+    },
+    'void_shield': {
+        name: 'Void Shield',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'offhand',
+        description: 'A shield that seems to absorb light and projectiles into an endless void.',
+        source: 'crafting',
+        stats: { def: 25, hp: 45, special: 'void_absorption' }
+    },
+    'lava_buckler': {
+        name: 'Lava Buckler',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'offhand',
+        description: 'A small shield embedded with lava gems that burns attackers.',
+        source: 'crafting',
+        stats: { def: 18, fire_resist: 15, special: 'burning_counter' }
+    },
+
+    // ACCESSORY SLOT
+    'ancient_signet': {
+        name: 'Ancient Signet',
+        type: 'equipment',
+        rarity: 'Rare',
+        slot: 'accessory',
+        description: 'A ring bearing the mark of a forgotten era, heavy with accumulated power.',
+        source: 'crafting',
+        stats: { luck: 18, atk: 8, special: 'ancient_wisdom' }
+    },
+    'feathered_brooch': {
+        name: 'Feathered Brooch',
+        type: 'equipment',
+        rarity: 'Uncommon',
+        slot: 'accessory',
+        description: 'An elegant brooch adorned with sky-creature plumes, lightening the wearer\'s step.',
+        source: 'crafting',
+        stats: { spd: 12, dodge: 10, wind_resist: 15 }
+    },
+    'soul_pendant': {
+        name: 'Soul Pendant',
+        type: 'equipment',
+        rarity: 'Epic',
+        slot: 'accessory',
+        description: 'A pendant containing soul fragments, connecting the wearer to the spirit realm.',
+        source: 'crafting',
+        stats: { hp: 65, atk: 15, special: 'soul_communion' }
+    },
+    'nightmare_choker': {
+        name: 'Nightmare Choker',
+        type: 'equipment',
+        rarity: 'Legendary',
+        slot: 'accessory',
+        description: 'A terrifying necklace that radiates fear, causing enemies to hesitate.',
+        source: 'crafting',
+        stats: { atk: 25, crit: 20, special: 'terror_aura' }
     },
 
     // --- TAMING LURES (Foraging/Boss) ---
@@ -418,13 +887,6 @@ module.exports = {
         description: 'A crystal that softly repeats any sound made near it.',
         source: 'dungeon'
     },
-    'spirit_dust': {
-        name: 'Spirit Dust',
-        type: 'ingredient',
-        rarity: 'Epic',
-        description: 'The shimmering remains of a benevolent spirit, perfect for enchanting.',
-        source: 'dungeon'
-    },
     'echo_core': {
         name: 'Echo Core',
         type: 'crafting_material',
@@ -439,39 +901,12 @@ module.exports = {
         description: 'A shard of volcanic glass, sharp enough to cut shadows.',
         source: 'dungeon'
     },
-    'fire_bloom': {
-        name: 'Fire Bloom',
-        type: 'ingredient',
-        rarity: 'Legendary',
-        description: 'A flower that thrives in extreme heat, its petals are made of cool flame.',
-        source: 'dungeon'
-    },
     'volcanic_core': {
         name: 'Volcanic Core',
         type: 'crafting_material',
         rarity: 'Legendary',
         description: 'A pulsating orb of magma, containing the raw power of the earth\'s core.',
         source: 'dungeon_drop'
-    },
-
-    // --- DUNGEON/RARE EQUIPMENT DROPS (Optional from earlier list) ---
-    'guardian_shield': {
-        name: 'Guardian Shield',
-        type: 'equipment',
-        rarity: 'Rare',
-        slot: 'offhand',
-        description: 'A polished shield that glows faintly when blocking attacks.',
-        source: 'dungeon_drop',
-        stats: { def: 20, hp: 50 }
-    },
-    'phoenix_crown': {
-        name: 'Phoenix Crown',
-        type: 'equipment',
-        rarity: 'Legendary',
-        slot: 'helmet',
-        description: 'A mythical crown said to revive its wearer once per dungeon.',
-        source: 'boss_drop',
-        stats: { hp: 100, atk: 20, special: 'revive_once' }
     },
 
     // --- EVENT/SHOP EXCLUSIVES (Optional from earlier list) ---
@@ -653,52 +1088,7 @@ module.exports = {
         description: 'A strange, pulsating egg that radiates both intense heat and a wild aura. Hatches in 18 hours.',
         hatchTimeMinutes: 1080, // 18 hours
         possiblePals: ['lava_hound'] 
-    },
+    },    
 
-    // --- Equipments ---
-    'stormcaller_staff': {
-        name: 'Stormcaller Staff',
-        type: 'equipment',
-        rarity: 'Epic',
-        slot: 'weapon',
-        description: 'A staff that crackles with lightning, calling storms to aid its wielder.',
-        source: 'crafting',
-        stats: { atk: 30, spd: 10, special: 'lightning_strike' }
-    },
-    'celestial_crown': {
-        name: 'Celestial Crown',
-        type: 'equipment',
-        rarity: 'Legendary',
-        slot: 'head',
-        description: 'A crown of pure starlight that blesses its wearer with divine favor.',
-        source: 'crafting',
-        stats: { hp: 75, atk: 15, def: 15, luck: 20 }
-    },
-    'void_cloak': {
-        name: 'Void Cloak',
-        type: 'equipment',
-        rarity: 'Epic',
-        slot: 'armor',
-        description: 'A cloak woven from shadow essence, allowing its wearer to blend with darkness.',
-        source: 'crafting',
-        stats: { def: 20, spd: 15, special: 'shadow_blend' }
-    },
-    'mechanical_gauntlets': {
-        name: 'Mechanical Gauntlets',
-        type: 'equipment',
-        rarity: 'Rare',
-        slot: 'gloves',
-        description: 'Precision-crafted gauntlets that enhance striking power and accuracy.',
-        source: 'crafting',
-        stats: { atk: 15, accuracy: 10 }
-    },
-    'storm_boots': {
-        name: 'Storm Boots',
-        type: 'equipment',
-        rarity: 'Rare',
-        slot: 'boots',
-        description: 'Boots that allow the wearer to move with the speed of wind.',
-        source: 'crafting',
-        stats: { spd: 25, dodge: 5 }
-    }
+
 };
