@@ -96,7 +96,9 @@ async function grantPalXp(client, message, palDocument, xpGained) {
             
             palDocument.basePetId = basePal.evolution.evolvesTo;
             palDocument.nickname = evolutionData.name; // Update nickname to new species name
-            palDocument.stats = evolutionData.baseSats;
+            palDocument.stats = evolutionData.baseStats;
+            palDocument.level = 1;
+            palDocument.xp = 0;
             
             const evolutionEmbed = createInfoEmbed(
                 `✨ What's this? Your ${oldName} is evolving! ✨`,
@@ -109,6 +111,4 @@ async function grantPalXp(client, message, palDocument, xpGained) {
     await palDocument.save();
     return leveledUp;
 }
-
-
 module.exports = { grantPlayerXp, grantPalXp, calculateXpForNextLevel };
