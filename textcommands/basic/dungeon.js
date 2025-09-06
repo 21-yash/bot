@@ -1,4 +1,4 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, StringSelectMenuBuilder } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, StringSelectMenuBuilder, EmbedBuilder } = require('discord.js');
 const Player = require('../../models/Player');
 const Pet = require('../../models/Pet');
 const { createErrorEmbed, createSuccessEmbed, createWarningEmbed, createCustomEmbed, createInfoEmbed } = require('../../utils/embed');
@@ -23,7 +23,6 @@ module.exports = {
                 return message.reply({ embeds: [createWarningEmbed('No Adventure Started', `You haven't started your journey yet! Use \`${prefix}start\` to begin.`)] });
             }
 
-            // Check if player is already in a dungeon
             if (client.dungeonSessions.has(message.author.id)) {
                 return message.reply({ embeds: [createWarningEmbed('Already in a Dungeon', 'You are already on an expedition! You cannot start another.')] });
             }
@@ -34,11 +33,11 @@ module.exports = {
             if (!dungeon) {
                 return message.reply({ embeds: [createWarningEmbed('Dungeon Not Found', `That dungeon does not exist. Use \`${prefix}alldungeons\` to see available locations.`)] });
             }
-            
-            // --- Initial Confirmation ---
+
+            // Confirmation
             const confirmationEmbed = createInfoEmbed(
                 `Enter ${dungeon.name}?`,
-                `**Tier:** ${dungeon.tier} | **Floors:** ${dungeon.floors} | **Duration:** ~${dungeon.floors * 1} mins\n` +
+                `**Tier:** ${dungeon.tier} | **Floors:** ${dungeon.floors}\n` +
                 `**Requires Pal Lvl:** ${dungeon.levelRequirement}\n\nAre you sure you want to begin this expedition?`
             );
             const confirmButtons = new ActionRowBuilder().addComponents(
@@ -47,7 +46,7 @@ module.exports = {
             );
 
             const reply = await message.reply({ embeds: [confirmationEmbed], components: [confirmButtons] });
-            
+
             const confirmationCollector = reply.createMessageComponentCollector({
                 filter: i => i.user.id === message.author.id,
                 time: 60000,
@@ -61,110 +60,74 @@ module.exports = {
                 }
 
                 if (i.customId === 'dungeon_enter') {
-                    // --- Pet Selection ---
-                    // First restore HP for any injured pets
+                    // Heal injured pets
                     const allPets = await Pet.find({ ownerId: message.author.id });
                     for (const pet of allPets) {
                         if (pet.status === 'Injured') {
                             await restorePetHp(pet);
                         }
                     }
-                    
+
                     const availablePals = await Pet.find({ ownerId: message.author.id, status: 'Idle', level: { $gte: dungeon.levelRequirement } });
                     if (availablePals.length === 0) {
-                        return i.update({ embeds: [createWarningEmbed('No Eligible Pals', `You don't have any idle Pals that meet the level requirement of **${dungeon.levelRequirement}** and are not injured.` )], components: [] });
+                        return i.update({ embeds: [createWarningEmbed('No Eligible Pals', `You don't have any idle Pals that meet the level requirement of **${dungeon.levelRequirement}**.`)], components: [] });
                     }
 
-                    const selectMenu = new StringSelectMenuBuilder()
-                        .setCustomId('select_pal_for_dungeon')
-                        .setPlaceholder('Select a Pal for this expedition...')
-                        .addOptions(availablePals.map(pal => ({
-                            label: `Lvl ${pal.level} ${pal.nickname}`,
-                            description: `HP: ${pal.stats.hp} | ATK: ${pal.stats.atk} | DEF: ${pal.stats.def}`,
-                            value: pal.petId
-                        })));
-                    
+                    // === PAGINATED PET SELECTION ===
+                    let page = 0;
+                    const perPage = 25;
+                    const maxPage = Math.ceil(availablePals.length / perPage) - 1;
+
+                    const buildMenu = (page) => {
+                        const petsSlice = availablePals.slice(page * perPage, page * perPage + perPage);
+                        return new StringSelectMenuBuilder()
+                            .setCustomId('select_pal_for_dungeon')
+                            .setPlaceholder('Select a Pal for this expedition...')
+                            .addOptions(petsSlice.map(pal => ({
+                                label: `Lvl ${pal.level} ${pal.nickname}`,
+                                description: `HP: ${pal.stats.hp} | ATK: ${pal.stats.atk} | DEF: ${pal.stats.def}`,
+                                value: pal.petId
+                            })));
+                    };
+
+                    const buildComponents = (page) => {
+                        const rows = [new ActionRowBuilder().addComponents(buildMenu(page))];
+                        if (maxPage > 0) {
+                            rows.push(new ActionRowBuilder().addComponents(
+                                new ButtonBuilder().setCustomId('prev_page').setLabel('Prev').setStyle(ButtonStyle.Secondary).setDisabled(page === 0),
+                                new ButtonBuilder().setCustomId('next_page').setLabel('Next').setStyle(ButtonStyle.Secondary).setDisabled(page === maxPage)
+                            ));
+                        }
+                        return rows;
+                    };
+
                     await i.update({
                         embeds: [createInfoEmbed('Select Your Pal', 'Choose a companion to accompany you into the dungeon.')],
-                        components: [new ActionRowBuilder().addComponents(selectMenu)]
+                        components: buildComponents(page)
                     });
 
-                    // Set the session lock early to prevent race conditions
                     client.dungeonSessions.set(message.author.id, {});
-                }
-            });
 
-            // Handle the Pal selection from the dropdown
-            const palSelectionCollector = reply.createMessageComponentCollector({
-                filter: i => i.user.id === message.author.id,
-                time: 2 * 60000, // 2 minutes
-                componentType: ComponentType.StringSelect
-            });
-
-            palSelectionCollector.on('collect', async i => {
-                palSelectionCollector.stop();
-                const selectedPalId = i.values[0];
-                const selectedPal = await Pet.findOne({ petId: selectedPalId });
-
-                // --- Potion Selection ---
-                const availablePotions = player.inventory.filter(item => {
-                    const itemData = allItems[item.itemId];
-                    return itemData && itemData.type === 'potion' && item.quantity > 0;
-                });
-
-                if (availablePotions.length > 0) {
-                    const potionOptions = availablePotions.map(item => ({
-                        label: `${allItems[item.itemId].name} (${item.quantity}x)`,
-                        description: allItems[item.itemId].description.substring(0, 100),
-                        value: item.itemId
-                    }));
-
-                    // Add "No Potion" option
-                    potionOptions.unshift({
-                        label: 'No Potion',
-                        description: 'Enter the dungeon without using any potions',
-                        value: 'none'
+                    const petCollector = reply.createMessageComponentCollector({
+                        filter: x => x.user.id === message.author.id,
+                        time: 2 * 60000
                     });
 
-                    const potionMenu = new StringSelectMenuBuilder()
-                        .setCustomId('select_potion_for_dungeon')
-                        .setPlaceholder('Select a potion to use (optional)...')
-                        .addOptions(potionOptions);
-
-                    await i.update({
-                        embeds: [createInfoEmbed('Select Potion', 'Choose a potion to enhance your Pal for this dungeon expedition.')],
-                        components: [new ActionRowBuilder().addComponents(potionMenu)]
-                    });
-
-                    // Handle potion selection
-                    const potionCollector = reply.createMessageComponentCollector({
-                        filter: i => i.user.id === message.author.id,
-                        time: 2 * 60000,
-                        componentType: ComponentType.StringSelect
-                    });
-
-                    potionCollector.on('collect', async potionInteraction => {
-                        potionCollector.stop();
-                        const selectedPotionId = potionInteraction.values[0];
-                        let selectedPotion = null;
-
-                        if (selectedPotionId !== 'none') {
-                            selectedPotion = allItems[selectedPotionId];
-                            // Consume the potion
-                            const potionItem = player.inventory.find(item => item.itemId === selectedPotionId);
-                            potionItem.quantity -= 1;
-                            if (potionItem.quantity <= 0) {
-                                player.inventory = player.inventory.filter(item => item.itemId !== selectedPotionId);
-                            }
-                            await player.save();
+                    petCollector.on('collect', async sel => {
+                        if (sel.customId === 'prev_page') {
+                            page = Math.max(0, page - 1);
+                            return sel.update({ components: buildComponents(page) });
                         }
-
-                        // --- Start the Dungeon Run ---
-                        await runDungeon(potionInteraction, selectedPal, dungeon, client, selectedPotion);
+                        if (sel.customId === 'next_page') {
+                            page = Math.min(maxPage, page + 1);
+                            return sel.update({ components: buildComponents(page) });
+                        }
+                        if (sel.customId === 'select_pal_for_dungeon') {
+                            petCollector.stop();
+                            const selectedPal = await Pet.findOne({ petId: sel.values[0] });
+                            await runPotionPhase(sel, selectedPal, dungeon, player, reply, client);
+                        }
                     });
-                } else {
-                    // No potions available, proceed directly
-                    await runDungeon(i, selectedPal, dungeon, client, null);
                 }
             });
 
@@ -176,9 +139,65 @@ module.exports = {
     }
 };
 
+// --- Extracted Potion Phase ---
+async function runPotionPhase(interaction, pal, dungeon, player, reply, client) {
+    const availablePotions = player.inventory.filter(item => {
+        const itemData = allItems[item.itemId];
+        return itemData && itemData.type === 'potion' && item.quantity > 0;
+    });
+
+    if (availablePotions.length > 0) {
+        const potionOptions = availablePotions.map(item => ({
+            label: `${allItems[item.itemId].name} (${item.quantity}x)`,
+            description: allItems[item.itemId].description.substring(0, 100),
+            value: item.itemId
+        }));
+        potionOptions.unshift({ label: 'No Potion', description: 'Enter without potions', value: 'none' });
+
+        const potionMenu = new StringSelectMenuBuilder()
+            .setCustomId('select_potion_for_dungeon')
+            .setPlaceholder('Select a potion to use (optional)...')
+            .addOptions(potionOptions);
+
+        await interaction.update({
+            embeds: [createInfoEmbed('Select Potion', 'Choose a potion to enhance your Pal.')],
+            components: [new ActionRowBuilder().addComponents(potionMenu)]
+        });
+
+        const potionCollector = reply.createMessageComponentCollector({
+            filter: i => i.user.id === interaction.user.id,
+            time: 2 * 60000,
+            componentType: ComponentType.StringSelect
+        });
+
+        potionCollector.on('collect', async potionInteraction => {
+            potionCollector.stop();
+            const selectedPotionId = potionInteraction.values[0];
+            let selectedPotion = null;
+
+            if (selectedPotionId !== 'none') {
+                selectedPotion = allItems[selectedPotionId];
+                const potionItem = player.inventory.find(item => item.itemId === selectedPotionId);
+                potionItem.quantity -= 1;
+                if (potionItem.quantity <= 0) {
+                    player.inventory = player.inventory.filter(item => item.itemId !== selectedPotionId);
+                }
+                await player.save();
+            }
+
+            await runDungeon(potionInteraction, pal, dungeon, client, selectedPotion);
+        });
+    } else {
+        await runDungeon(interaction, pal, dungeon, client, null);
+    }
+}
+
+// keep your runDungeon + finalizeDungeon + helpers here...
+
+
 async function runDungeon(interaction, pal, dungeon, client, selectedPotion = null) {
     let currentFloor = 1;
-    const sessionRewards = { gold: 0, xp: 0, loot: [], egg: null };
+    const sessionRewards = { gold: 0, xp: 0, loot: [], egg: [] };
 
     // Get the player instance at the start of the function
     const player = await Player.findOne({ userId: interaction.user.id });
@@ -273,7 +292,10 @@ async function runDungeon(interaction, pal, dungeon, client, selectedPotion = nu
                 }
             });
             
-            if (floorRewards.egg && !sessionRewards.egg) sessionRewards.egg = floorRewards.egg; // Only get first egg
+            if (floorRewards.egg) {
+                if (!sessionRewards.egg) sessionRewards.egg = [];
+                sessionRewards.egg.push(floorRewards.egg);
+            }
 
             let rewardString = `**+${floorRewards.gold1}** Gold\n**+${floorRewards.xp1}** XP`;
             floorRewards.loot.forEach(item => {
@@ -312,9 +334,11 @@ async function finalizeDungeon(interaction, pal, player, rewards, client, floors
     });
     
     if (rewards.egg) {
-        const existing = player.inventory.find(i => i.itemId === rewards.egg.itemId);
-        if (existing) existing.quantity += 1;
-        else player.inventory.push(rewards.egg);
+        rewards.egg.forEach(item => {
+            const existing = player.inventory.find(i => i.itemId === item.itemId);
+            if (existing) existing.quantity += 1;
+            else player.inventory.push(item);
+        })
     }
     
     await player.save();
@@ -355,8 +379,11 @@ async function finalizeDungeon(interaction, pal, player, rewards, client, floors
         
         // Add egg if obtained
         if (rewards.egg) {
-            const eggData = allItems[rewards.egg.itemId];
-            finalSummary += `\n• **1x** ${eggData.name} 🥚`;
+            rewards.egg.forEach(item => {
+                const eggData = allItems[item.itemId];
+                finalSummary += `\n• **1x** ${eggData.name} 🥚`;
+            })
+            
         }
     } else {
         finalSummary += `\n\n**Items Obtained:** None`;
@@ -371,7 +398,7 @@ async function finalizeDungeon(interaction, pal, player, rewards, client, floors
         const currentHp = pal.currentHp || 0;
         const maxHp = pal.stats.hp;
         const hpToRecover = maxHp - currentHp;
-        const timeToHeal = Math.ceil(hpToRecover / 1) * 2; // 1 HP per 10 minutes
+        const timeToHeal = Math.ceil(hpToRecover / 1) * 1; // 1 HP per 1 minutes
         finalSummary += `\n\n⚠️ Your **${pal.nickname}** is now **Injured** (${currentHp}/${maxHp} HP)`;
         if (timeToHeal > 0) {
             finalSummary += `\n🕐 Will fully heal in approximately **${timeToHeal}** minutes`;
